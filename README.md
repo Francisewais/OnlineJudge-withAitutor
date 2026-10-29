@@ -2,7 +2,9 @@
 
 一个带 **AI 助教**的在线评测系统：在网页上写代码、自动评测；做不出来的时候，可以让 AI（默认接入 DeepSeek）结合你的代码和评测结果，一步步教你写出来。
 
-![做题页面](docs/images/workspace.png)
+![做题页面和 AI 助教](docs/images/workspace.png)
+
+<sub>上图：自测运行发现三个 $10^9$ 相加输出了负数，点「帮我找错」后 AI 指出是 `int` 溢出（回答由 DeepSeek 实时生成）。</sub>
 
 ## 功能
 
