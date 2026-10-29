@@ -76,6 +76,8 @@ services:
       judger:
         condition: service_healthy
     networks: [app, judge]
+    # JVM 按容器内存的 75% 设置堆大小；不限制的话会按整台机器的内存算，和其他服务抢内存
+    mem_limit: ${BACKEND_MEMORY:-1g}
     restart: unless-stopped
 
   frontend:
