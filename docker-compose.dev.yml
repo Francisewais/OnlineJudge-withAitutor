@@ -1,0 +1,19 @@
+# 本地开发用：把数据库、判题机、后端的端口暴露到本机，方便在 IDE 里调试。
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d mysql judger
+# 注意：开发模式下判题机额外连接了一个普通网络（才能暴露端口），可以访问外网，不要用于正式部署。
+services:
+  mysql:
+    ports:
+      - "127.0.0.1:3306:3306"
+
+  judger:
+    networks: [judge, dev]
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  backend:
+    ports:
+      - "127.0.0.1:8081:8080"
+
+networks:
+  dev: {}

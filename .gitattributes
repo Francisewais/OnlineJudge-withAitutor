@@ -1,0 +1,2 @@
+# 统一用 LF 换行：脚本和 Dockerfile 要在 Linux 容器里执行，CRLF 会导致报错
+* text=auto eol=lf

@@ -1,0 +1,104 @@
+[
+  {
+    "title": "A + B",
+    "solutions": {
+      "c": "#include <stdio.h>\n\nint main(void) {\n    int a, b;\n    scanf(\"%d %d\", &a, &b);\n    printf(\"%d\\n\", a + b);\n    return 0;\n}\n",
+      "cpp": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    return 0;\n}\n",
+      "java": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        int a = in.nextInt(), b = in.nextInt();\n        System.out.println(a + b);\n    }\n}\n",
+      "python": "a, b = map(int, input().split())\nprint(a + b)\n"
+    },
+    "wrong": [
+      {
+        "language": "python",
+        "verdict": "WA",
+        "note": "输出了提示文字",
+        "code": "a, b = map(int, input().split())\nprint('结果是', a + b)\n"
+      }
+    ]
+  },
+  {
+    "title": "数组求和",
+    "solutions": {
+      "cpp": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    long long sum = 0;  // 和可能超过 int 的范围\n    for (int i = 0; i < n; i++) {\n        long long x;\n        cin >> x;\n        sum += x;\n    }\n    cout << sum << endl;\n    return 0;\n}\n",
+      "java": "import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));\n        int n = Integer.parseInt(in.readLine().trim());\n        StringTokenizer st = new StringTokenizer(in.readLine());\n        long sum = 0;\n        for (int i = 0; i < n; i++) {\n            sum += Long.parseLong(st.nextToken());\n        }\n        System.out.println(sum);\n    }\n}\n",
+      "python": "n = int(input())\nprint(sum(map(int, input().split())))\n"
+    },
+    "wrong": [
+      {
+        "language": "cpp",
+        "verdict": "WA",
+        "note": "用 int 累加溢出",
+        "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n, sum = 0;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int x;\n        cin >> x;\n        sum += x;\n    }\n    cout << sum << endl;\n    return 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "title": "回文串",
+    "solutions": {
+      "cpp": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    int i = 0, j = (int)s.size() - 1;\n    while (i < j && s[i] == s[j]) {\n        i++;\n        j--;\n    }\n    cout << (i >= j ? \"Yes\" : \"No\") << endl;\n    return 0;\n}\n",
+      "python": "s = input().strip()\nprint('Yes' if s == s[::-1] else 'No')\n"
+    },
+    "wrong": []
+  },
+  {
+    "title": "括号匹配",
+    "solutions": {
+      "cpp": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    vector<char> st;\n    bool ok = true;\n    for (char c : s) {\n        if (c == '(' || c == '[' || c == '{') {\n            st.push_back(c);\n        } else {\n            char need = c == ')' ? '(' : (c == ']' ? '[' : '{');\n            if (st.empty() || st.back() != need) {\n                ok = false;\n                break;\n            }\n            st.pop_back();\n        }\n    }\n    cout << (ok && st.empty() ? \"Yes\" : \"No\") << endl;\n    return 0;\n}\n",
+      "python": "s = input().strip()\npairs = {')': '(', ']': '[', '}': '{'}\nstack = []\nok = True\nfor c in s:\n    if c in '([{':\n        stack.append(c)\n    elif not stack or stack.pop() != pairs[c]:\n        ok = False\n        break\nprint('Yes' if ok and not stack else 'No')\n"
+    },
+    "wrong": []
+  },
+  {
+    "title": "爬楼梯",
+    "solutions": {
+      "cpp": "#include <iostream>\nusing namespace std;\n\nint main() {\n    const long long MOD = 1000000007;\n    int n;\n    cin >> n;\n    long long a = 1, b = 2;  // f(1), f(2)\n    if (n == 1) {\n        cout << 1 << endl;\n        return 0;\n    }\n    for (int i = 3; i <= n; i++) {\n        long long c = (a + b) % MOD;\n        a = b;\n        b = c;\n    }\n    cout << b << endl;\n    return 0;\n}\n",
+      "python": "n = int(input())\nMOD = 10 ** 9 + 7\na, b = 1, 2  # f(1), f(2)\nfor _ in range(n - 1):\n    a, b = b, (a + b) % MOD\nprint(a)\n"
+    },
+    "wrong": [
+      {
+        "language": "cpp",
+        "verdict": "TLE",
+        "note": "直接递归，指数级复杂度",
+        "code": "#include <iostream>\nusing namespace std;\n\nlong long f(int n) {\n    if (n <= 2) return n;\n    return (f(n - 1) + f(n - 2)) % 1000000007;\n}\n\nint main() {\n    int n;\n    cin >> n;\n    cout << f(n) << endl;\n    return 0;\n}\n"
+      }
+    ]
+  },
+  {
+    "title": "第一个不小于 x 的数",
+    "solutions": {
+      "cpp": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n, q;\n    scanf(\"%d %d\", &n, &q);\n    vector<int> a(n);\n    for (int i = 0; i < n; i++) scanf(\"%d\", &a[i]);\n    while (q--) {\n        int x;\n        scanf(\"%d\", &x);\n        int lo = 0, hi = n;  // 答案在 [lo, hi) 中，hi == n 表示不存在\n        while (lo < hi) {\n            int mid = (lo + hi) / 2;\n            if (a[mid] >= x) hi = mid;\n            else lo = mid + 1;\n        }\n        printf(\"%d\\n\", lo < n ? lo + 1 : -1);\n    }\n    return 0;\n}\n",
+      "python": "import sys\nfrom bisect import bisect_left\n\ndata = sys.stdin.buffer.read().split()\nn, q = int(data[0]), int(data[1])\na = list(map(int, data[2:2 + n]))\nout = []\nfor x in map(int, data[2 + n:2 + n + q]):\n    pos = bisect_left(a, x)\n    out.append(str(pos + 1) if pos < n else '-1')\nprint('\\n'.join(out))\n"
+    },
+    "wrong": [
+      {
+        "language": "python",
+        "verdict": "TLE",
+        "note": "每次询问都线性扫描",
+        "code": "import sys\ndata = sys.stdin.read().split()\nn, q = int(data[0]), int(data[1])\na = list(map(int, data[2:2 + n]))\nfor x in map(int, data[2 + n:]):\n    ans = -1\n    for i in range(n):\n        if a[i] >= x:\n            ans = i + 1\n            break\n    print(ans)\n"
+      }
+    ]
+  },
+  {
+    "title": "走迷宫",
+    "solutions": {
+      "cpp": "#include <iostream>\n#include <string>\n#include <vector>\n#include <queue>\nusing namespace std;\n\nint main() {\n    int n, m;\n    cin >> n >> m;\n    vector<string> g(n);\n    for (auto &row : g) cin >> row;\n    vector<vector<int>> dist(n, vector<int>(m, -1));\n    queue<pair<int, int>> q;\n    for (int i = 0; i < n; i++)\n        for (int j = 0; j < m; j++)\n            if (g[i][j] == 'S') {\n                dist[i][j] = 0;\n                q.push({i, j});\n            }\n    int dx[] = {1, -1, 0, 0}, dy[] = {0, 0, 1, -1};\n    while (!q.empty()) {\n        auto [x, y] = q.front();\n        q.pop();\n        if (g[x][y] == 'T') {\n            cout << dist[x][y] << endl;\n            return 0;\n        }\n        for (int d = 0; d < 4; d++) {\n            int nx = x + dx[d], ny = y + dy[d];\n            if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;\n            if (g[nx][ny] == '#' || dist[nx][ny] != -1) continue;\n            dist[nx][ny] = dist[x][y] + 1;  // 入队时就标记，避免重复入队\n            q.push({nx, ny});\n        }\n    }\n    cout << -1 << endl;\n    return 0;\n}\n",
+      "python": "import sys\nfrom collections import deque\n\ndata = sys.stdin.read().split()\nn, m = int(data[0]), int(data[1])\ng = data[2:2 + n]\ndist = [[-1] * m for _ in range(n)]\nq = deque()\nfor i in range(n):\n    j = g[i].find('S')\n    if j >= 0:\n        dist[i][j] = 0\n        q.append((i, j))\nans = -1\nwhile q:\n    x, y = q.popleft()\n    if g[x][y] == 'T':\n        ans = dist[x][y]\n        break\n    for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):\n        if 0 <= nx < n and 0 <= ny < m and g[nx][ny] != '#' and dist[nx][ny] < 0:\n            dist[nx][ny] = dist[x][y] + 1\n            q.append((nx, ny))\nprint(ans)\n"
+    },
+    "wrong": []
+  },
+  {
+    "title": "最长上升子序列",
+    "solutions": {
+      "cpp": "#include <cstdio>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    int n;\n    scanf(\"%d\", &n);\n    vector<int> d;  // d[k]：长度为 k+1 的上升子序列的最小结尾\n    for (int i = 0; i < n; i++) {\n        int x;\n        scanf(\"%d\", &x);\n        auto it = lower_bound(d.begin(), d.end(), x);\n        if (it == d.end()) d.push_back(x);\n        else *it = x;\n    }\n    printf(\"%d\\n\", (int)d.size());\n    return 0;\n}\n",
+      "python": "import sys\nfrom bisect import bisect_left\n\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])\nd = []  # d[k]：长度为 k+1 的上升子序列的最小结尾\nfor x in map(int, data[1:1 + n]):\n    i = bisect_left(d, x)\n    if i == len(d):\n        d.append(x)\n    else:\n        d[i] = x\nprint(len(d))\n"
+    },
+    "wrong": [
+      {
+        "language": "cpp",
+        "verdict": "TLE",
+        "note": "O(n^2) 动态规划",
+        "code": "#include <cstdio>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n;\n    scanf(\"%d\", &n);\n    vector<int> a(n), f(n, 1);\n    for (auto &x : a) scanf(\"%d\", &x);\n    int best = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < i; j++)\n            if (a[j] < a[i] && f[j] + 1 > f[i]) f[i] = f[j] + 1;\n        if (f[i] > best) best = f[i];\n    }\n    printf(\"%d\\n\", best);\n    return 0;\n}\n"
+      }
+    ]
+  }
+]

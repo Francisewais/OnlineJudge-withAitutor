@@ -1,0 +1,101 @@
+name: oj
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: oj
+      MYSQL_USER: oj
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请先复制 .env.example 为 .env 并设置 MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请在 .env 里设置 MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks: [app]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  judger:
+    build:
+      context: ./judger
+      args:
+        APT_MIRROR: ${APT_MIRROR:-}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+    image: oj-judger
+    environment:
+      JUDGE_TOKEN: ${JUDGE_TOKEN:?请在 .env 里设置 JUDGE_TOKEN}
+      JUDGE_CONCURRENCY: ${JUDGE_CONCURRENCY:-4}
+    # 判题机会运行任意代码：只连内部网络（不能上网），根文件系统只读，只保留沙箱需要的权限
+    networks: [judge]
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+      # 编译出的程序在这里执行，必须允许 exec（Docker 的 tmpfs 默认 noexec）
+      - /judger/run:size=1g,mode=0711,exec
+      - /judger/log:size=64m
+    cap_drop: [ALL]
+    cap_add: [SETUID, SETGID, CHOWN, KILL, DAC_OVERRIDE, FOWNER]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 1024
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        MAVEN_MIRROR: ${MAVEN_MIRROR:-}
+    image: oj-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/oj?sslMode=DISABLED&allowPublicKeyRetrieval=true&characterEncoding=utf8&connectionTimeZone=UTC
+      SPRING_DATASOURCE_USERNAME: oj
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      OJ_JWT_SECRET: ${OJ_JWT_SECRET:?请在 .env 里设置 OJ_JWT_SECRET}
+      OJ_ADMIN_USERNAME: ${OJ_ADMIN_USERNAME:-admin}
+      OJ_ADMIN_PASSWORD: ${OJ_ADMIN_PASSWORD:-}
+      OJ_JUDGER_URL: http://judger:8000
+      OJ_JUDGER_TOKEN: ${JUDGE_TOKEN}
+      OJ_JUDGE_CONCURRENCY: ${JUDGE_CONCURRENCY:-4}
+      OJ_AI_API_KEY: ${OJ_AI_API_KEY:-}
+      OJ_AI_BASE_URL: ${OJ_AI_BASE_URL:-https://api.deepseek.com}
+      OJ_AI_MODEL: ${OJ_AI_MODEL:-deepseek-flash}
+      OJ_AI_THINKING: ${OJ_AI_THINKING-disabled}
+      OJ_AI_DAILY_LIMIT: ${OJ_AI_DAILY_LIMIT:-30}
+      TZ: ${TZ:-Asia/Shanghai}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      judger:
+        condition: service_healthy
+    networks: [app, judge]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org}
+        SITE_NAME: ${OJ_SITE_NAME:-Online Judge}
+    image: oj-frontend
+    ports:
+      - "${OJ_BIND:-127.0.0.1}:${OJ_PORT:-8080}:80"
+    depends_on: [backend]
+    networks: [app]
+    restart: unless-stopped
+
+networks:
+  app: {}
+  # internal：这个网络里的容器不能访问外网
+  judge:
+    internal: true
+
+volumes:
+  mysql-data: {}

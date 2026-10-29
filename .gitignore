@@ -1,0 +1,28 @@
+# 本地配置（含密钥）
+.env
+
+# 整理前留下的 IDE 配置等，可以删除
+.legacy/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 构建产物
+build/
+output/
+cmake-build-debug/
+target/
+node_modules/
+dist/
+*.so
+
+# Python
+__pycache__/
+*.pyc
+
+# 其他
+*.log
+*.swp
+.DS_Store

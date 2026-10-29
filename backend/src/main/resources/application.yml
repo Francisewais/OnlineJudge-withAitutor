@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: oj-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/oj?sslMode=DISABLED&allowPublicKeyRetrieval=true&characterEncoding=utf8&connectionTimeZone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:oj}
+    password: ${SPRING_DATASOURCE_PASSWORD:oj}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+oj:
+  jwt:
+    # 不设置时每次启动随机生成，重启后所有用户需要重新登录
+    secret: ${OJ_JWT_SECRET:}
+    ttl: 7d
+  admin:
+    username: ${OJ_ADMIN_USERNAME:admin}
+    # 不设置时首次启动随机生成并打印在日志里
+    password: ${OJ_ADMIN_PASSWORD:}
+  judger:
+    url: ${OJ_JUDGER_URL:http://localhost:8000}
+    token: ${OJ_JUDGER_TOKEN:}
+    concurrency: ${OJ_JUDGE_CONCURRENCY:4}
+    timeout: 10m
+  ai:
+    # 任何 OpenAI 兼容的接口都可以，默认是 DeepSeek
+    base-url: ${OJ_AI_BASE_URL:https://api.deepseek.com}
+    api-key: ${OJ_AI_API_KEY:}
+    model: ${OJ_AI_MODEL:deepseek-flash}
+    # DeepSeek 默认开启思考模式；enabled / disabled，留空则不发送这个参数（其他服务商用）
+    thinking: ${OJ_AI_THINKING:disabled}
+    max-tokens: ${OJ_AI_MAX_TOKENS:2048}
+    daily-limit: ${OJ_AI_DAILY_LIMIT:30}
+    timeout: 3m

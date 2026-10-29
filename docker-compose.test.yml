@@ -1,0 +1,21 @@
+# 端到端测试用：增加一个模拟的 AI 服务（tests/mock_ai.py），后端改为调用它。
+#   docker compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
+#   python3 tests/e2e_test.py
+services:
+  mock-ai:
+    image: python:3.12-alpine
+    command: ["python", "/app/mock_ai.py"]
+    volumes:
+      - ./tests/mock_ai.py:/app/mock_ai.py:ro
+    networks: [app]
+    ports:
+      - "127.0.0.1:9000:9000"
+
+  backend:
+    environment:
+      OJ_AI_API_KEY: test-key
+      OJ_AI_BASE_URL: http://mock-ai:9000
+      OJ_AI_DAILY_LIMIT: 6
+    depends_on:
+      mock-ai:
+        condition: service_started
