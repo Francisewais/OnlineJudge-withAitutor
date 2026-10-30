@@ -26,8 +26,8 @@
 需要 [Docker](https://docs.docker.com/engine/install/)（Windows 可以在 WSL 里装：`sudo apt install docker.io docker-compose-v2 docker-buildx`）。
 
 ```bash
-git clone https://github.com/Francisewais/ai-online-judge.git
-cd ai-online-judge
+git clone https://github.com/Francisewais/OnlineJudge-withAitutor.git
+cd OnlineJudge-withAitutor
 cp .env.example .env
 ```
 
