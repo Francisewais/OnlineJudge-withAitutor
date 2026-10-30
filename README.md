@@ -123,7 +123,7 @@ python3 tests/e2e_test.py
 - `general` 规则禁止 `clone3`（新版 glibc 创建线程、进程会先用它，原规则只禁止了 `clone`）；
 - C/C++ 白名单增加 `mremap`、`madvise`、`readlinkat`（新版 glibc 的 `realloc` 和静态链接程序会用到）；
 - 测试代码适配 Python 3.12。
-- 
+
 ## 碎碎念
 - 希望能帮到跟我一样不知死活毕设选了oj的人 这玩意是真难啊
 
